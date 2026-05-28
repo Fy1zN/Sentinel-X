@@ -1,0 +1,50 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.database.connection import SessionLocal
+from app.auth.dependencies import get_current_user
+
+from app.models.user import User
+from app.models.ioc_history import IOCHistory
+
+router = APIRouter(
+    prefix="/history",
+    tags=["History"]
+)
+
+
+# Database Dependency
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@router.get("/")
+def get_history(
+    current_user: str = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Find current user
+    user = db.query(User).filter(
+        User.username == current_user
+    ).first()
+
+    if not user:
+        return []
+
+    # Get IOC history
+    history = (
+    db.query(IOCHistory)
+    .filter(
+        IOCHistory.user_id == user.id
+    )
+    .order_by(
+        IOCHistory.id.desc()
+    )
+    .all()
+)
+    return history
