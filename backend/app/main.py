@@ -19,6 +19,7 @@ from app.auth.dependencies import get_current_user
 from app.api import watchlist
 from app.api import reports
 from app.websocket import live_feed
+from app.api import profile
 
 # FASTAPI APP
 app = FastAPI(
@@ -50,8 +51,9 @@ app.include_router(correlation.router)
 app.include_router(watchlist.router) 
 app.include_router(reports.router)
 app.include_router( live_feed.router )
+app.include_router(profile.router)
 
-# HOME ROUTE
+# HOME ROUTE 
 @app.get("/")
 def home():
     return {
