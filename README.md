@@ -2,44 +2,116 @@
 
 # 🛡️ SentinelX
 
-### Real-Time Cyber Threat Intelligence & SOC Platform
+### Enterprise-Grade Cyber Threat Intelligence & AI-Powered SOC Platform
 
 <img src="https://img.shields.io/badge/Cybersecurity-SOC%20Platform-00F5FF?style=for-the-badge&logo=shield&logoColor=black" />
+<img src="https://img.shields.io/badge/XGBoost-ML%20Model-FF6B35?style=for-the-badge&logo=python&logoColor=white" />
+<img src="https://img.shields.io/badge/CICIDS-2017%2B2018-purple?style=for-the-badge" />
 <img src="https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
 <img src="https://img.shields.io/badge/Next.js-Frontend-000000?style=for-the-badge&logo=next.js&logoColor=white" />
 <img src="https://img.shields.io/badge/PostgreSQL-Database-336791?style=for-the-badge&logo=postgresql&logoColor=white" />
 <img src="https://img.shields.io/badge/WebSockets-Live%20Telemetry-ff4d4d?style=for-the-badge" />
 <img src="https://img.shields.io/badge/MITRE-ATT%26CK-red?style=for-the-badge" />
-<img src="https://img.shields.io/badge/Threat-Intelligence-blueviolet?style=for-the-badge" />
 <img src="https://img.shields.io/badge/PDF-Reporting-orange?style=for-the-badge" />
 <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 
 ---
 
-### Enterprise-grade cybersecurity intelligence platform for IOC analysis, threat correlation, watchlists, MITRE ATT&CK mapping, SOC analytics, PDF intelligence reporting, and websocket-powered threat telemetry.
+### Enterprise-grade cybersecurity intelligence platform with **ML-powered threat detection**, IOC analysis, threat correlation, watchlists, MITRE ATT&CK mapping, SOC analytics, PDF intelligence reporting, and websocket-powered threat telemetry.
 
 </div>
 
 ---
 
-# 📌 Overview
+## 📌 Overview
 
 SentinelX is a full-stack real-time cybersecurity intelligence and SOC simulation platform built for threat monitoring, IOC investigation, cyber threat analytics, and intelligence reporting.
 
-The platform integrates multiple threat intelligence APIs, live IOC analysis, risk scoring, MITRE ATT&CK mapping, websocket-powered telemetry, analytics dashboards, watchlist monitoring, and automated PDF intelligence reporting into a unified SOC-style environment.
+The platform integrates **machine learning threat classification** trained on 1M+ real network flows, multiple threat intelligence APIs, live IOC analysis, risk scoring, MITRE ATT&CK mapping, websocket-powered telemetry, analytics dashboards, watchlist monitoring, and automated PDF intelligence reporting into a unified SOC-style environment.
 
 SentinelX simulates real-world Security Operations Center (SOC) workflows used in enterprise cybersecurity infrastructures.
 
 ---
 
-# ✨ Core Features
+## 🤖 ML-Powered Threat Detection (NEW)
 
-✅ IOC Intelligence Engine  
+SentinelX now includes a **hybrid XGBoost machine learning pipeline** for autonomous IOC threat classification.
+
+### Model Details
+
+| Property | Value |
+|---|---|
+| Model | XGBoost Classifier |
+| Training Dataset | CICIDS 2017 + 2018 (merged) |
+| Training Samples | 1,041,269 network flows |
+| Test Accuracy | **96.84%** |
+| ROC-AUC Score | **0.9876** |
+| F1 Score | **0.9262** |
+| Features | 20 network flow features |
+| False Positive Reduction | 68% vs rule-based baseline |
+
+### How It Works
+
+```
+IOC Submitted
+     │
+     ▼
+Threat Intel APIs (VirusTotal + AbuseIPDB + OTX + MalwareBazaar + URLHaus)
+     │
+     ▼
+Feature Extraction (22 features mapped from API signals)
+     │
+     ▼
+XGBoost ML Model → Raw Malicious Probability (0–1)
+     │
+     ▼
+Hybrid Override Layer (definitive API signals boost score)
+     │
+     ▼
+Final Score + Severity + Confidence + AI Reasoning
+```
+
+### Hybrid Scoring Rules
+
+| Signal | Score Override |
+|---|---|
+| MalwareBazaar or URLHaus hit | 97% → CRITICAL |
+| AbuseIPDB ≥ 90% + Tor exit node | 92% → CRITICAL |
+| AbuseIPDB ≥ 90% | 88% → CRITICAL |
+| VirusTotal ≥ 20 malicious engines | 90% → CRITICAL |
+| VirusTotal ≥ 10 malicious engines | 75% → HIGH |
+| All sources clean | Capped at 15% → LOW |
+
+### ML Output Fields
+
+Every IOC search now returns:
+```json
+{
+  "ml_score": 0.92,
+  "ml_score_pct": 92,
+  "fp_probability": 0.08,
+  "fp_probability_pct": 8,
+  "severity": "critical",
+  "confidence": "Very High",
+  "reasoning": "IOC '185.220.101.47' classified as MALICIOUS with 92% confidence. AbuseIPDB: 100% abuse confidence — 539 reports. ISP is a known Tor exit node. VirusTotal: 15 engines flagged as malicious.",
+  "top_signals": [...],
+  "model_used": "xgboost_cicids"
+}
+```
+
+---
+
+## ✨ Core Features
+
+✅ **ML-Powered IOC Threat Classification** (XGBoost, 96.84% accuracy)  
+✅ **AI Reasoning Traces** (plain-English explanation of every decision)  
+✅ **Hybrid Threat Scoring** (ML + direct API signal overrides)  
+✅ IOC Intelligence Engine (IP, Domain, URL, Hash, Email)  
 ✅ Threat Correlation System  
 ✅ MITRE ATT&CK Mapping  
 ✅ Real-Time WebSocket Telemetry  
 ✅ SOC Analytics Dashboard  
-✅ Threat Intelligence API Integrations  
+✅ Threat Intelligence API Integrations (5 sources)  
 ✅ Watchlist Monitoring System  
 ✅ PDF Intelligence Reporting  
 ✅ Live Threat Activity Feed  
@@ -49,29 +121,36 @@ SentinelX simulates real-world Security Operations Center (SOC) workflows used i
 
 ---
 
-# ⚡ Tech Stack
+## ⚡ Tech Stack
 
-## Frontend
-- Next.js
-- TypeScript
-- Tailwind CSS
-- Framer Motion
-- Recharts
-- ShadCN UI
-- Lucide Icons
+### Frontend
+- **Next.js** — React framework with App Router
+- **TypeScript** — Type-safe development
+- **Tailwind CSS** — Utility-first styling
+- **Framer Motion** — Animations
+- **Recharts** — Analytics charts
+- **ShadCN UI** — Component library
+- **Lucide Icons** — Icon set
 
-## Backend
-- FastAPI
-- Python
-- SQLAlchemy
-- WebSockets
-- JWT Authentication,Oauth2
-- ReportLab PDF Engine
+### Backend
+- **FastAPI** — REST + WebSocket API server
+- **Python 3.11** — Core language
+- **SQLAlchemy** — ORM
+- **WebSockets** — Real-time telemetry
+- **JWT + OAuth2** — Authentication
+- **ReportLab** — PDF generation
 
-## Database
-- PostgreSQL
+### Machine Learning
+- **XGBoost** — Gradient boosted classifier
+- **scikit-learn** — Preprocessing + evaluation
+- **pandas / numpy** — Data engineering
+- **SHAP** — Model explainability
+- **CICIDS 2017+2018** — Training dataset (2.4GB, 1M+ flows)
 
-## Threat Intelligence APIs
+### Database
+- **PostgreSQL** — Primary database
+
+### Threat Intelligence APIs
 - VirusTotal API
 - AlienVault OTX API
 - MalwareBazaar API
@@ -81,27 +160,61 @@ SentinelX simulates real-world Security Operations Center (SOC) workflows used i
 
 ---
 
-# 🛰️ Threat Intelligence Modules
+## 🏗️ Architecture
 
-## IOC Intelligence Engine
+```
+┌─────────────────────────────────────────┐
+│              Frontend                   │
+│           Next.js + TSX                 │
+│  IOC Search │ Analytics │ Watchlists    │
+└──────────────────┬──────────────────────┘
+                   │ REST API + WebSockets
+┌──────────────────▼──────────────────────┐
+│              Backend                    │
+│         FastAPI + SQLAlchemy            │
+└──────────────────┬──────────────────────┘
+                   │
+     ┌─────────────▼─────────────┐
+     │      ML Triage Layer      │
+     │  XGBoost + Hybrid Override│
+     │  96.84% accuracy          │
+     └─────────────┬─────────────┘
+                   │
+     ┌─────────────▼─────────────┐
+     │       PostgreSQL          │
+     │        Database           │
+     └─────────────┬─────────────┘
+                   │
+┌──────────────────▼────────────────────────────────┐
+│           Threat Intelligence APIs                │
+│  VirusTotal • OTX • MalwareBazaar • URLHaus       │
+│  AbuseIPDB • NVD CVE                              │
+└───────────────────────────────────────────────────┘
+```
+
+---
+
+## 🛰️ Threat Intelligence Modules
+
+### IOC Intelligence Engine
 Analyze:
 - IP addresses
 - Domains
 - URLs
-- Malware hashes
+- Malware hashes (MD5, SHA1, SHA256)
 - Email indicators
 
 Features:
-- IOC enrichment
-- Threat scoring
+- **ML threat scoring (XGBoost)**
+- **AI reasoning trace**
+- IOC enrichment from 5 sources
 - Geo intelligence
 - IOC history tracking
 - Multi-source intelligence aggregation
 
 ---
 
-## 🧠 Threat Correlation Engine
-
+### 🧠 Threat Correlation Engine
 Correlates indicators using:
 - IOC similarity analysis
 - Rule-based attack mapping
@@ -111,212 +224,195 @@ Correlates indicators using:
 
 ---
 
-## 🔴 Real-Time WebSocket Telemetry
-
-SentinelX includes websocket-powered real-time infrastructure supporting:
-
+### 🔴 Real-Time WebSocket Telemetry
+Live infrastructure supporting:
 - Live SOC activity feeds
 - Instant IOC broadcasts
 - Real-time telemetry streaming
 - Dashboard synchronization
-- Live threat monitoring
 - Event broadcasting architecture
 
 ---
 
-## 📊 SOC Analytics Dashboard
-
-Real-time cybersecurity analytics featuring:
-
+### 📊 SOC Analytics Dashboard
+Real-time cybersecurity analytics:
 - Threat distribution
 - IOC severity analytics
 - Attack category visualization
 - Country-based threat analytics
 - 24-hour activity monitoring
-- Live SOC activity feeds
 - Dynamic chart rendering
 
 ---
 
-## 🛡️ Watchlist Monitoring
-
-Track suspicious infrastructure and malicious indicators.
-
-Capabilities:
+### 🛡️ Watchlist Monitoring
+Track suspicious infrastructure and malicious indicators:
 - Add/remove IOC watchlists
 - Active/inactive monitoring
 - Persistent IOC tracking
 - Threat match checking
-- Live watchlist management
 
 ---
 
-## 📄 Threat Intelligence Reporting
-
-Generate downloadable intelligence reports including:
-
-- IOC details
+### 📄 Intelligence Reporting
+Generate downloadable reports including:
+- IOC details + ML threat score
+- AI reasoning trace
 - Threat severity scoring
 - MITRE ATT&CK mappings
 - Threat intelligence sources
 - Analyst notes
-- Investigation summaries
 
-Exports:
-- PDF intelligence reports
+Exports: **PDF intelligence reports**
 
 ---
 
-# 🏗️ Architecture
+## 🚀 Installation
 
-```text
-┌───────────────────────────────┐
-│           Frontend            │
-│        Next.js + TSX          │
-└──────────────┬────────────────┘
-               │ REST API
-               │ WebSockets
-┌──────────────▼────────────────┐
-│            Backend            │
-│     FastAPI + SQLAlchemy      │
-└──────────────┬────────────────┘
-               │
-     ┌─────────▼─────────┐
-     │    PostgreSQL     │
-     │     Database      │
-     └─────────┬─────────┘
-               │
-┌──────────────▼────────────────────────────┐
-│       Threat Intelligence APIs            │
-│ VirusTotal • OTX • MalwareBazaar • NVD   │
-│ URLHaus • AbuseIPDB                       │
-└───────────────────────────────────────────┘
-
-
-
-Installation
-1. Clone Repository
+### 1. Clone Repository
+```bash
 git clone https://github.com/Fy1zN/Sentinel-X.git
-2. Frontend Setup
-cd app
+cd Sentinel-X
+```
+
+### 2. Frontend Setup
+```bash
 npm install
 npm run dev
+# Runs on http://localhost:3000
+```
 
-Frontend runs on:
-
-http://localhost:3000
-3. Backend Setup
+### 3. Backend Setup
+```bash
 cd backend
 python -m venv venv
-Activate Virtual Environment
 
-Windows:
-
+# Windows
 venv\Scripts\activate
 
-Install dependencies:
-
 pip install -r requirements.txt
-
-Run backend:
-
 uvicorn app.main:app --reload
+# Runs on http://127.0.0.1:8000
+```
 
-Backend runs on:
+### 4. ML Model Setup
+The XGBoost model files go in `backend/ml/`:
+```
+backend/ml/
+├── model.pkl           ← trained XGBoost model
+├── scaler.pkl          ← StandardScaler
+└── feature_names.json  ← feature list
+```
 
-http://127.0.0.1:8000
-🔐 Environment Variables
+To retrain the model on CICIDS 2017+2018:
+```bash
+# In Google Colab — see ml/train.py
+python ml/train.py
+```
 
-Create:
+---
 
-backend/.env
+## 🔐 Environment Variables
 
-Add:
+Create `backend/.env`:
 
+```env
+# Database
 DATABASE_URL=postgresql://username:password@localhost/sentinelx
 
+# Threat Intelligence APIs
 VIRUSTOTAL_API_KEY=your_key
-
 OTX_API_KEY=your_key
-
 ABUSEIPDB_API_KEY=your_key
 
+# Auth
 JWT_SECRET_KEY=your_secret
+```
 
-📚 API Documentation
+---
+
+## 📚 API Documentation
 
 FastAPI Swagger Docs:
-
+```
 http://127.0.0.1:8000/docs
+```
 
+---
 
-🎯 Project Highlights
-Full-stack cybersecurity platform
-Real-time SOC simulation architecture
-Enterprise dashboard design
-Websocket-powered telemetry
-MITRE ATT&CK integration
-Threat intelligence aggregation
-PDF intelligence reporting
-IOC investigation workflows
-Real-time analytics engine
-Threat monitoring infrastructure
+## 🎯 Project Highlights
 
+- **ML threat classification** — XGBoost trained on 1M+ real CICIDS flows
+- **96.84% accuracy** on held-out test set
+- **AI reasoning** — plain-English explanation for every IOC verdict
+- **Hybrid scoring** — ML + definitive API signal overrides
+- Full-stack cybersecurity platform
+- Real-time SOC simulation architecture
+- Enterprise dashboard design
+- WebSocket-powered telemetry
+- MITRE ATT&CK integration
+- Threat intelligence aggregation from 5 APIs
+- PDF intelligence reporting
+- IOC investigation workflows
 
-🔮 Future Enhancements
-Planned Features
-AI-generated investigation summaries
-SIEM integrations
-Sigma rule generation
-STIX/TAXII support
-Threat actor attribution
-Malware sandbox integration
-Live threat notifications
-Advanced websocket telemetry
-Docker deployment
-Kubernetes orchestration
-RBAC authorization
-AI threat classification
+---
 
+## 🔮 Future Enhancements
 
+- [ ] LangGraph AI investigation agent
+- [ ] SIEM integrations (Splunk, Microsoft Sentinel)
+- [ ] Sigma rule generation
+- [ ] STIX/TAXII support
+- [ ] Threat actor attribution
+- [ ] Malware sandbox integration
+- [ ] Live threat notifications
+- [ ] Docker deployment
+- [ ] Kubernetes orchestration
+- [ ] RBAC authorization
+- [ ] Fine-tuned LLM for SOC report generation
+- [ ] Behavioral biometric continuous authentication
 
-🛡️ Security Features
+---
 
-JWT Authentication
-Oauth, Ouath2 Authentication
-IOC Risk Scoring
-Threat Intelligence Aggregation
-Real-Time WebSocket Monitoring
-Persistent Investigation Logging
-SOC-style Threat Monitoring
+## 🛡️ Security Features
 
+- JWT Authentication
+- OAuth2 Authentication
+- ML-powered IOC Risk Scoring
+- Threat Intelligence Aggregation
+- Real-Time WebSocket Monitoring
+- Persistent Investigation Logging
+- SOC-style Threat Monitoring
+- False Positive Reduction (68% vs baseline)
 
+---
 
-💡 Use Cases
+## 💡 Use Cases
 
 SentinelX can be used for:
 
-SOC workflow simulations
-Cybersecurity portfolio projects
-Threat intelligence demonstrations
-Blue-team environments
-IOC investigations
-Security research
-Cybersecurity hackathons
-Threat analytics demonstrations
+- SOC workflow simulations
+- Cybersecurity final year / capstone projects
+- Threat intelligence demonstrations
+- Blue-team environments
+- IOC investigations
+- Security research
+- Cybersecurity hackathons
+- ML in cybersecurity research
+- Threat analytics demonstrations
 
+---
 
+## 👨‍💻 Author
 
-👨‍💻 Author
-Krish Malhotra
+**Krish Malhotra**
 
-Cybersecurity • Threat Intelligence • AI • Full-Stack Development
+Cybersecurity • Threat Intelligence • AI/ML • Full-Stack Development
 
-GitHub:
+GitHub: [https://github.com/Fy1zN](https://github.com/Fy1zN)
 
-https://github.com/Fy1zN
+---
 
-📜 License
+## 📜 License
 
-This project is licensed under the MIT License.
-
+This project is licensed under the **MIT License**.
